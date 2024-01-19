@@ -39,7 +39,7 @@ export const handler = async (event) => {
   if (!requestBody) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: `Empty request body.` }),
+      body: JSON.stringify({ error: 'Empty request body.' }),
     }
   }
 
