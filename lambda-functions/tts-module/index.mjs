@@ -136,7 +136,7 @@ export const handler = async (event) => {
   try {
     const ttsData = await synthesize(transcript)
 
-    const bucket = 'auto-news-podcast-post-processed-podcast-transcript'
+    const bucket = 'auto-news-podcast-transcript-vocals'
 
     const audioKey = `${inputKey.replace(/.json$/, '.wav')}`
     const audioBody = ttsData.audioData

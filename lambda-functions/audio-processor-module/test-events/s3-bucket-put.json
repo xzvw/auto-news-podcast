@@ -1,0 +1,14 @@
+{
+  "Records": [
+    {
+      "s3": {
+        "bucket": {
+          "name": "auto-news-podcast-transcript-vocals"
+        },
+        "object": {
+          "key": "2024-1-19-1705704341206.json"
+        }
+      }
+    }
+  ]
+}

@@ -65,8 +65,9 @@ export const handler = async (event) => {
     data: [],
   }
 
-  const taskId = inputEndKey.split('#')[0]
-  const endIndex = Number(inputEndKey.replace(/-end.json$/, '').split('#')[1])
+  // 使用 decodeURIComponent 的原因是, # 會被 encode 成 %23
+  const taskId = decodeURIComponent(inputEndKey).split('#')[0]
+  const endIndex = Number(decodeURIComponent(inputEndKey).replace(/-end.json$/, '').split('#')[1])
 
   // Merging data
   for (let i = 0; i <= endIndex; i++) {

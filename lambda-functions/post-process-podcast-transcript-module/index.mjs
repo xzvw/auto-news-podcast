@@ -115,11 +115,11 @@ export const handler = async (event) => {
 
   const rawPodcastTranscript = data?.choices?.[0]?.message?.content
 
-  const prompt = `請使用以下原始逐字稿內容進行後製、潤飾，產生 podcast 新聞播報內容逐字稿，並符合以下要求：
+  const makePrompt = (date) =>`請使用以下原始逐字稿內容進行後製、潤飾，產生 podcast 新聞播報內容逐字稿，並符合以下要求：
 - 主持人名字為 Chelsea，節目名稱為「再聽五分鐘」
 - 主字稿內容請使用「podcast」一詞，請不要使用「播客」
 - 節目開頭，必須包含主持人的開場白
-- 節目開頭，主持人必須提及今天的日期（2024年1月21日）
+- 節目開頭，主持人必須提及今天的日期（${date}）
 - 節目開頭，適當的加上主持人對聽眾的問候話題，最多兩句話
 - 節目內容，主持人的節奏轉折必須流暢自然
 - 節目接近結尾處，主持人會適當的分享自己與新聞內容的生活經驗，或是有趣的冷知識，以添增互動的感覺
@@ -130,7 +130,7 @@ export const handler = async (event) => {
 ${rawPodcastTranscript}`
 
   try {
-    const data = await chatCompletion(prompt)
+    const data = await chatCompletion(makePrompt(task.targetNews.date))
 
     const bucket = 'auto-news-podcast-post-processed-podcast-transcript'
     const key = inputKey

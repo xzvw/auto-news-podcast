@@ -3,3 +3,4 @@
 .aws-sam
 .env
 node_modules
+venv

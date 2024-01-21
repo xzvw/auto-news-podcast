@@ -96,7 +96,7 @@ export const handler = async (event) => {
   )
 
   const newsList = data.value
-  const topNewsList = newsList.slice(0, 10)
+  const topNewsList = newsList.slice(0, 5)
 
   for (let i = 0; i < topNewsList.length; i++) {
     const rawNews = topNewsList[i]

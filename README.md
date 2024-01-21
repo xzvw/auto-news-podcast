@@ -15,6 +15,9 @@ Region: us-east-1 (N. Virginia)
     - AWSLambdaBasicExecutionRole-60960177-3597-49b2-8696-ffa915b53682
     - AmazonS3FullAccess
 - Triggers
+  - EventBridge (CloudWatch Events)
+    - Rule name: daily-podcast-pipeline
+    - Schedule expression: `cron(0 1 * * ? *)`
   - API Gateway
     - POST https://luxk8ydfee.execute-api.us-east-1.amazonaws.com/default/task-module
     - body 帶上 newsMarket, newsCategory, musicTemplate
@@ -201,7 +204,7 @@ Region: us-east-1 (N. Virginia)
 
 因為包含 dependency, 因此使用 .zip 的方式上傳
 
-打包 package.zip: `find . -name .DS_Store -type f -delete && rm package.zip && zip -r package.zip .`
+打包 package.zip: `find . -name .DS_Store -type f -delete && zip -r package.zip .`
 
 - Runtime: Node.js 18.x
 - Architecture: x86_64
@@ -218,6 +221,97 @@ Region: us-east-1 (N. Virginia)
 - 輸出至 (S3 Bucket) auto-news-podcast-transcript-vocals
 - 有設定環境變數 TTS_API_KEY
 - Timeout: 3min
+
+### (S3 Bucket) auto-news-podcast-transcript-vocals
+
+### (S3 Bucket) auto-news-podcast-background-music
+
+### (Lambda) audio-processor-module
+
+因為包含 dependency, 因此使用 .zip 的方式上傳
+
+打包 package.zip:
+
+```shell
+# 在 auto-news-podcast/lambda-functions/audio-processor-module 執行
+find . -name .DS_Store -type f -delete && \
+cd venv/lib/python3.11/site-packages && \
+zip -r ${OLDPWD}/function.zip . && \
+cd $OLDPWD &&  \
+zip -g function.zip lambda_function.py
+```
+
+開發:
+
+```shell
+python3 -m venv venv
+source venv/bin/activate
+pip3 install pydub
+```
+
+使用了 lambda layers (s3://auto-news-podcast-lambda-layers/pydub.zip)
+
+- Runtime: Python 3.12
+- Architecture: x86_64
+- IAM role: audio-processor-module-role-8vkmlu9q
+  - Permissions policies:
+    - AWSLambdaBasicExecutionRole-c9ee3707-9191-4dd8-8605-1fcae0ffb3d3
+    - AmazonS3FullAccess
+- Triggers
+  - API Gateway
+    - POST https://dn5gzgno44.execute-api.us-east-1.amazonaws.com/default/audio-processor-module
+    - body 帶上 bucket, key (範例: 2024-1-19-1705704341206.json)
+  - S3
+    - Bucket: auto-news-podcast-transcript-vocals
+    - Event types: PUT
+    - Suffix: .json
+- 輸出至 (S3 Bucket) auto-news-podcast-final-audios
+- Memory: 1024MB
+- Timeout: 1min
+
+### (S3 Bucket) auto-news-podcast-final-audios
+
+### (Lambda) generate-episode-info-module
+
+❌ 尚未實作
+
+- Runtime: Node.js 18.x
+- Architecture: x86_64
+- IAM role: generate-episode-info-module-role-gmbjffb4
+  - Permissions policies:
+    - AWSLambdaBasicExecutionRole-70435f98-590b-4612-abc5-01b642c9b886
+    - AmazonS3FullAccess
+- Triggers
+  - API Gateway: 因為 request 超過 30 秒會被 API Gateway drop, 故不使用
+  - S3
+    - Bucket: auto-news-podcast-final-audios
+    - Event types: PUT
+    - Suffix: .mp3
+    - 備註: 因為同樣 bucket 的 overlapping object 不能作為兩個 lambda functions 的 trigger, 所以這裡不使用 auto-news-podcast-post-processed-podcast-transcript 作為觸發 bucket
+- 輸出至 (S3 Bucket) auto-news-podcast-episode-info
+- 有設定環境變數 OPEN_AI_API_KEY
+- Timeout: 3min
+
+### (S3 Bucket) auto-news-podcast-episode-info
+
+### (Lambda) generate-rss-by-episode-info-module
+
+❌ 尚未建立
+
+### (Lambda) public-rss-module
+
+❌ 尚未建立
+
+## Bucket Pipeline
+
+- auto-news-podcast-tasks
+- auto-news-podcast-news-api-data
+- auto-news-podcast-news-content
+- auto-news-podcast-post-processed-news-content
+- auto-news-podcast-raw-podcast-transcript
+- auto-news-podcast-post-processed-podcast-transcript
+- auto-news-podcast-transcript-vocals
+- auto-news-podcast-final-audios
 
 ## 參考
 
