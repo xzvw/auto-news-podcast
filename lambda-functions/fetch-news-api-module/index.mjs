@@ -46,7 +46,9 @@ async function fetchBingNews({ mkt, category }) {
         })
 
         response.on('end', () => {
-          resolve(data)
+          const parsedData = JSON.parse(data)
+
+          resolve(parsedData)
         })
       })
       .on('error', (error) => {

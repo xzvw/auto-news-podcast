@@ -1,2 +1,4 @@
 *.rest
+.DS_Store
+.aws-sam
 .env

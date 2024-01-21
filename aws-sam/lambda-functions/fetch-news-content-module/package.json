@@ -1,0 +1,13 @@
+{
+  "name": "fetch-news-content-module",
+  "private": true,
+  "version": "0.1.0",
+  "main": "index.mjs",
+  "devDependencies": {
+    "@aws-sdk/client-s3": "^3.484.0",
+    "@sparticuz/chromium": "^118.0.0"
+  },
+  "dependencies": {
+    "puppeteer-core": "^21.4.0"
+  }
+}
