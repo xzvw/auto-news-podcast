@@ -316,3 +316,7 @@ pip3 install pydub
 ## 參考
 
 - https://learn.microsoft.com/en-us/bing/search-apis/bing-news-search/reference/query-parameters
+
+## 資源
+
+- 背景音樂: FASSounds from Pixabay https://pixabay.com/users/fassounds-3433550/
