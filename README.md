@@ -157,6 +157,46 @@ Region: us-east-1 (N. Virginia)
 
 ### (S3 Bucket) auto-news-podcast-post-processed-news-content
 
+### (Lambda) generate-podcast-transcript-module
+
+- Runtime: Node.js 18.x
+- Architecture: x86_64
+- IAM role: generate-podcast-transcript-module-role-42cvdq20
+  - Permissions policies:
+    - AWSLambdaBasicExecutionRole-6c217f42-503a-414e-8138-8f8feb0bd7fc
+    - AmazonS3FullAccess
+- Triggers
+  - API Gateway: 因為 request 超過 30 秒會被 API Gateway drop, 故不使用
+  - S3
+    - Bucket: auto-news-podcast-post-processed-news-content
+    - Event types: PUT
+    - Suffix: .json
+- 輸出至 (S3 Bucket) auto-news-podcast-raw-podcast-transcript
+- 有設定環境變數 OPEN_AI_API_KEY
+- Timeout: 3min
+
+### (S3 Bucket) auto-news-podcast-raw-podcast-transcript
+
+### (Lambda) post-process-podcast-transcript-module
+
+- Runtime: Node.js 18.x
+- Architecture: x86_64
+- IAM role: post-process-podcast-transcript-module-role-6mg7uuc2
+  - Permissions policies:
+    - AWSLambdaBasicExecutionRole-6a65b9ba-b6af-46d9-985c-d6f2cd30501d
+    - AmazonS3FullAccess
+- Triggers
+  - API Gateway: 因為 request 超過 30 秒會被 API Gateway drop, 故不使用
+  - S3
+    - Bucket: auto-news-podcast-raw-podcast-transcript
+    - Event types: PUT
+    - Suffix: .json
+- 輸出至 (S3 Bucket) auto-news-podcast-post-processed-podcast-transcript
+- 有設定環境變數 OPEN_AI_API_KEY
+- Timeout: 3min
+
+### (S3 Bucket) auto-news-podcast-post-processed-podcast-transcript
+
 ## 參考
 
 - https://learn.microsoft.com/en-us/bing/search-apis/bing-news-search/reference/query-parameters
