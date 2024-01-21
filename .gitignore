@@ -2,3 +2,4 @@
 .DS_Store
 .aws-sam
 .env
+node_modules

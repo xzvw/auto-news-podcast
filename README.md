@@ -197,6 +197,28 @@ Region: us-east-1 (N. Virginia)
 
 ### (S3 Bucket) auto-news-podcast-post-processed-podcast-transcript
 
+### (Lambda) tts-module
+
+因為包含 dependency, 因此使用 .zip 的方式上傳
+
+打包 package.zip: `find . -name .DS_Store -type f -delete && rm package.zip && zip -r package.zip .`
+
+- Runtime: Node.js 18.x
+- Architecture: x86_64
+- IAM role: tts-module-role-yykteejk
+  - Permissions policies:
+    - AWSLambdaBasicExecutionRole-6dd4498a-c206-4ee6-9f2d-8a80dbd9f370
+    - AmazonS3FullAccess
+- Triggers
+  - API Gateway: 因為 request 超過 30 秒會被 API Gateway drop, 故不使用
+  - S3
+    - Bucket: auto-news-podcast-post-processed-podcast-transcript
+    - Event types: PUT
+    - Suffix: .json
+- 輸出至 (S3 Bucket) auto-news-podcast-transcript-vocals
+- 有設定環境變數 TTS_API_KEY
+- Timeout: 3min
+
 ## 參考
 
 - https://learn.microsoft.com/en-us/bing/search-apis/bing-news-search/reference/query-parameters
