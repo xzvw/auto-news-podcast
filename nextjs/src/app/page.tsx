@@ -2,7 +2,7 @@ import AWS from 'aws-sdk'
 import { useMemo } from 'react'
 
 AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY,
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   region: 'us-east-1',
 })
@@ -73,7 +73,11 @@ async function TaskEntry({ date }: { date: Date }) {
       {dataList.map((data, index) => {
         let content = null
 
-        if (data?.Name && Array.isArray(data?.Contents)) {
+        if (
+          data?.Name &&
+          Array.isArray(data?.Contents) &&
+          data.Contents.length > 0
+        ) {
           if (data.Name === 'auto-news-podcast-news-content') {
             content = data.Contents.map((value: any) => (
               <div key={value?.Key}>{value?.Key}</div>
